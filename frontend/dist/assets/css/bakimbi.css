@@ -1,0 +1,63 @@
+.listem{
+	
+	display: block;
+	position: relative;
+	list-style: none;
+
+}
+
+.listem-eleman{
+    position: relative;
+    display: block;
+    padding: 1.10rem 1rem;
+    margin-bottom: -1px;
+    font-size: 14px;
+}
+
+.listem-altband{
+	font-size: 17px;
+	color: white;
+}
+
+.listem-altband:not(:last-child){
+	margin-right: 2.5rem;
+}
+
+.listem-altband-ul{
+	padding: 3px 0 0 100px;
+}
+
+.news-feed-form:active{
+-webkit-box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.74);
+-moz-box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.74);
+box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.74);
+border-radius: 16px 16px 16px 16px;
+-moz-border-radius: 16px 16px 16px 16px;
+-webkit-border-radius: 16px 16px 16px 16px;
+border: 0px solid #000000;
+}
+
+.container-fluidim{
+	padding-right: 150px;
+    padding-left: 150px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+}
+
+.bg-bakimbi{
+	background-color: #f44336;
+}
+
+.logo-top{
+	float:left;
+	padding: 10px 0  0 100px;
+}
+.yukari{
+	margin-top: -50px;
+}
+
+.post-devam{
+	    padding: 25px 25px 25px 25px;
+   		border-bottom: 1px solid #e6ecf5;
+}
