@@ -1,0 +1,235 @@
+﻿//yorum yapma
+MERGE(comment:titleComment{id:randomUUID(),name:'@MRorhan',text:'Aşk olmadan olmaz.'}) WITH comment  MATCH(title:title{id:'6b9a60cc-a791-4f16-b908-92e16308f1ba'}) CREATE (title)-[rel:comment]->(comment) RETURN comment,title  => eski
+
+//Registerdan kişi oluşturma
+CREATE (user:User{name:'register kayıt', rank:'Çaylak',id:randomUUID(),userName:'@register',pass:'123123.',profile_pics:'bakimbi_default.jpg',email:'register@mail.com',createDate:datetime()}) RETURN user
+
+//Veritabanında unique property oluşturma
+CREATE CONSTRAINT ON (user:User) ASSERT user.userName IS UNIQUE
+
+// Entry Girme Sorgusu
+MATCH (user:User{id:'df31fb64-d1ed-4ce1-ba48-dc210243fa58'}), (title:Title{id: '6723b721-3570-4c49-ace8-3b792477181e'})
+CREATE (entry:Entries{id:randomUUID(),userName:'@orhan',name:'Orhan Asım',text:'Aşk olmadan olmaz.',createDate:datetime()})
+CREATE (user)-[rel:AUTHOR]->(entry)<-[r:HAS_ENTRY]-(title)
+RETURN user, rel, entry, r, title
+
+//Takip etme Sorgusu (user1, user2'yi takip eder.)
+MATCH (user1:User)
+WHERE user1.id = 'df31fb64-d1ed-4ce1-ba48-dc210243fa58'
+MATCH (user2:User)
+WHERE user2.id = '6e80f27b-eee1-4de2-8ae8-b080fac33487'
+CREATE (user1)-[rel:FOLLOW {createDate:datetime()}]->(user2)
+RETURN rel, user1, user2
+
+
+//Dashboard Sorgusu
+MATCH (user:User)
+WHERE user.id = 'df31fb64-d1ed-4ce1-ba48-dc210243fa58'
+MATCH (user)-[r:FOLLOW]->(a)
+
+MATCH (a)-[rel1:like]->(b)
+with b
+MATCH (a)-[rel2:favorite]->(c)
+with b, c
+MATCH (a)-[rel2:HAS_ENTRY]->(d)
+return b, c, d
+
+
+//like atma
+MATCH (user:User),(entry:Entries) 
+WHERE user.id = 'df31fb64-d1ed-4ce1-ba48-dc210243fa58' AND entry.id = '1be9df11-8af6-40b9-8df3-7d25cd0d6096'
+CREATE (user)-[rel:like {createDate:datetime()}]->(entry)
+RETURN rel, user, entry
+
+//like silme
+MATCH (user:User)-[r:like]->(entry:Entries) 
+WHERE user.id = 'df31fb64-d1ed-4ce1-ba48-dc210243fa58' AND entry.id = '1be9df11-8af6-40b9-8df3-7d25cd0d6096'
+CREATE (user)-[r2: deleted_like {createDate: r.createDate, deleteDate:datetime()}]->(entry)
+DELETE r
+
+
+// entry like sayma v1 (user olmadan)
+MATCH (user:User),(entry:Entries)
+MATCH (user)-[rel:like]->(entry)
+WHERE user.id = 'df31fb64-d1ed-4ce1-ba48-dc210243fa58' AND 
+RETURN count(rel) AS COUNT
+
+//entry like sayma v2 (user like sayısı ile)
+MATCH (title:Title)-[:HAS_ENTRY]->(entry:Entries) where title.id='6723b721-3570-4c49-ace8-3b792477181e' 
+OPTIONAL MATCH (user)-[userLike:like]->(entry)
+OPTIONAL MATCH ()-[rel:like]->(entry) 
+RETURN entry.name, entry.text, entry.id, entry.userName, entry.createDate, count(rel) AS like, count(userLike) AS userLike  ORDER BY entry.createDate ASC
+
+//user like sayma (entries + comments)
+MATCH (user:User)-[r:like]->() 
+WHERE user.id = '3c9b1afa-6eb2-4446-8975-20b55a2ae5d4'
+RETURN count(r) as count
+
+// mevcut user node larına foto ekleme
+MATCH (n:User)
+SET n.profile_pics = 'profile_bakimbi.jpg'
+RETURN n
+
+//Title icindeki tum entryleri LIKE sayılarıyla birlikte dönme
+MATCH (title:Title)-[:HAS_ENTRY]->(entry:Entries)
+where title.id='620f134a-8519-457c-a65a-869d6fc97799'
+OPTIONAL MATCH ()-[rel:like]->(entry)
+RETURN entry, count(rel) AS COUNT ORDER BY entry.createDate ASC
+
+
+MERGE (title:Title{name:'Orhan Asım',userName:'@orhan',text:'kur-an\'ın girmediği kalp karanlık bir kalptir',creatDate:timestamp(), updateDate:timestamp(),id:randomUUID()}) return title
+MERGE (title:Title{name:'Yasin Gürbüz',userName:'@gurbuz',text:'oğlunun adını mühimmat koyan albay',creatDate:timestamp(), updateDate:timestamp(),id:randomUUID()}) return title
+MERGE (title:Title{name:'Sait Zengin',userName:'@zengidSaid',text:'ingilizcenin en zalim konusu',creatDate:timestamp(), updateDate:timestamp(),id:randomUUID()}) return title
+MERGE (title:Title{name:'İsmail',userName:'@ismail',text:'sevgili aramayan yanlız insan',creatDate:timestamp(), updateDate:timestamp(),id:randomUUID()}) return title
+
+
+MERGE (user:User{name:'İsmail AYDIN',rank:'Yazar',id:'ecb9c07f-42c9-4bf5-9dca-42319164d6d3',userName:'@ismail',pass:'123123.',profile_pics:'orhan_reis.jpg'}) RETURN user
+MERGE (user:User{name:'Sait Zengin',rank:'Yeni Yazar',id:'6e80f27b-eee1-4de2-8ae8-b080fac33487',userName:'@zengidSaid',pass:'123123.',profile_pics:'orhan_reis.jpg'}) RETURN user
+MERGE (user:User{name:'Yasin Gürbüz',rank:'Çaylak',id:'282bd397-8e52-401a-966b-1e72ac974ba5',userName:'@gurbuz',pass:'123123.',profile_pics:'orhan_reis.jpg'}) RETURN user
+MERGE (user:User{name:'Orhan Asım',rank:'Yazar',id:'df31fb64-d1ed-4ce1-ba48-dc210243fa58',userName:'@orhan',pass:'123123.',profile_pics:'orhan_reis.jpg'}) RETURN user
+
+MATCH (entry:Entries{id:'125ce0d4-e771-4800-a454-5bc1f34529fb'}) DETACH DELETE entry 
+
+//ANA AKIŞ SORGUSU BAŞLANGIÇ--------------------------------------------------------------------------
+MATCH (user:User)
+WHERE user.id = 'ecb9c07f-42c9-4bf5-9dca-42319164d6d3'
+MATCH (user)-[r:FOLLOW]->(a)
+MATCH (a)-[rel:like]->(b)<-[:HAS_ENTRY]-(title:Title)
+OPTIONAL MATCH  (user)-[userLike:like]->(b) OPTIONAL MATCH  (user)-[userFavorite:favorite]->(b) 
+OPTIONAL MATCH  (user)-[userRepost:repost]->(b) OPTIONAL MATCH (user)-[userDislike:dislike]->(b) 
+OPTIONAL MATCH ()-[CountLike:like]->(b) OPTIONAL MATCH ()-[countFav:favorite]->(b) 
+OPTIONAL MATCH ()-[countDislike:dislike]->(b) OPTIONAL MATCH ()-[countRepost:repost]->(b) 
+OPTIONAL MATCH (userCreatedEntry)-[relAuth:AUTHOR]->(b)
+with collect({usr:user.name, entryId:b.id, entryName:b.name, entryUser:b.userName, entryText:b.text,hasRelName:a.name, hasRelUserName:a.userName, 
+hasRelUserId:a.id, hasRelImg:a.profile_pics, relType:rel.relName,relCreateDate:rel.createDate, titleId:title.id, title:title.text, userLike:(userLike), 
+userFavorite:(userFavorite), userRepost:(userRepost), userDislike:userDislike, CountLike:CountLike, countFav:countFav, countDislike:countDislike,
+countRepost:countRepost,createdEntryUserId :userCreatedEntry.id, userCreatedEntryImg:userCreatedEntry.profile_pics, createdEntryTime:b.createDate}) as like
+MATCH (user:User)
+WHERE user.id = 'ecb9c07f-42c9-4bf5-9dca-42319164d6d3'
+MATCH (user)-[r:FOLLOW]->(a)
+MATCH (a)-[rel:favorite]->(c)<-[:HAS_ENTRY]-(title:Title) 
+OPTIONAL MATCH  (user)-[userLike:like]->(c) OPTIONAL MATCH  (user)-[userFavorite:favorite]->(c) 
+OPTIONAL MATCH  (user)-[userRepost:repost]->(c) OPTIONAL MATCH (user)-[userDislike:dislike]->(c) 
+OPTIONAL MATCH ()-[CountLike:like]->(c) OPTIONAL MATCH ()-[countFav:favorite]->(c) 
+OPTIONAL MATCH ()-[countDislike:dislike]->(c) OPTIONAL MATCH ()-[countRepost:repost]->(c) 
+OPTIONAL MATCH (userCreatedEntry)-[relAuth:AUTHOR]->(c)
+with like + collect({usr:user.name, entryId:c.id, entryName:c.name, entryUser:c.userName, entryText:c.text, hasRelName:a.name, hasRelUserName:a.userName, 
+hasRelUserId:a.id, hasRelImg:a.profile_pics, relType:rel.relName, relCreateDate:rel.createDate, titleId:title.id, title:title.text,userLike:(userLike), 
+userFavorite:(userFavorite), userRepost:(userRepost), userDislike:userDislike, CountLike:CountLike, countFav:countFav, countDislike:countDislike, 
+countRepost:countRepost,createdEntryUserId :userCreatedEntry.id, userCreatedEntryImg:userCreatedEntry.profile_pics, createdEntryTime:c.createDate}) as likeAndFav
+MATCH (user:User)
+WHERE user.id = 'ecb9c07f-42c9-4bf5-9dca-42319164d6d3'
+MATCH (user)-[r:FOLLOW]->(a)
+MATCH (a)-[rel:AUTHOR]->(d)<-[:HAS_ENTRY]-(title:Title) 
+OPTIONAL MATCH (user)-[userLike:like]->(d) OPTIONAL MATCH (user)-[userFavorite:favorite]->(d) 
+OPTIONAL MATCH (user)-[userRepost:repost]->(d) OPTIONAL MATCH (user)-[userDislike:dislike]->(d) 
+OPTIONAL MATCH ()-[CountLike:like]->(d) OPTIONAL MATCH ()-[countFav:favorite]->(d) 
+OPTIONAL MATCH ()-[countDislike:dislike]->(d) OPTIONAL MATCH ()-[countRepost:repost]->(d) 
+OPTIONAL MATCH (userCreatedEntry)-[relAuth:AUTHOR]->(d)
+with likeAndFav + collect({usr:user.name, entryId:d.id, entryName:d.name, entryUser:d.userName, entryText:d.text, hasRelName:a.name, hasRelUserName:a.userName, 
+hasRelUserId:a.id ,hasRelImg:a.profile_pics, relType:rel.relName, relCreateDate:rel.createDate, titleId:title.id, title:title.text, userLike:(userLike), 
+userFavorite:(userFavorite), userRepost:(userRepost), userDislike:userDislike, CountLike:CountLike, countFav:countFav, countDislike:countDislike, 
+countRepost:countRepost,createdEntryUserId :userCreatedEntry.id, userCreatedEntryImg:userCreatedEntry.profile_pics, createdEntryTime:d.createDate}) as likeAndFavAndAUTHOR
+MATCH (user:User)
+WHERE user.id = 'ecb9c07f-42c9-4bf5-9dca-42319164d6d3'
+MATCH (user)-[r:FOLLOW]->(a)
+MATCH (a)-[rel:repost]->(e)<-[:HAS_ENTRY]-(title:Title) 
+OPTIONAL MATCH(user)-[userLike:like]->(e) OPTIONAL MATCH(user)-[userFavorite:favorite]->(e) 
+OPTIONAL MATCH (user)-[userRepost:repost]->(e) OPTIONAL MATCH (user)-[userDislike:dislike]->(e) 
+OPTIONAL MATCH ()-[CountLike:like]->(e) OPTIONAL MATCH ()-[countFav:favorite]->(e) 
+OPTIONAL MATCH ()-[countDislike:dislike]->(e) OPTIONAL MATCH ()-[countRepost:repost]->(e) 
+OPTIONAL MATCH (userCreatedEntry)-[relAuth:AUTHOR]->(e)
+with likeAndFavAndAUTHOR + collect({usr:user.name, entryId:e.id, entryName:e.name,entryUser:e.userName, entryText:e.text, hasRelName:a.name, hasRelUserName:a.userName,
+hasRelUserId:a.id, hasRelImg:a.profile_pics, relType:rel.relName, relCreateDate:rel.createDate, titleId:title.id, title:title.text, userLike:userLike, userFavorite: userFavorite,
+userRepost: userRepost, userDislike:userDislike, CountLike:CountLike, countFav:countFav, countDislike:countDislike, countRepost:countRepost, createdEntryUserId :userCreatedEntry.id, 
+userCreatedEntryImg:userCreatedEntry.profile_pics, createdEntryTime:e.createDate}) as likeAndFavAndAUTHORAndRepost
+UNWIND likeAndFavAndAUTHORAndRepost as row
+return row.entryName as createdEntryUser, row.createdEntryUserId as createdEntryUserId, row.hasRelUserName as hasRelUserName, row.hasRelName as hasRelName, 
+row.hasRelUserId as hasRelUserId, count(DISTINCT(row.CountLike)) as CountLike, count(DISTINCT(row.countFav)) as countFav, count(DISTINCT(row.countDislike)) as countDislike, 
+count(DISTINCT(row.countRepost)) as countRepost, count(DISTINCT(row.userLike)) as userLike, count(DISTINCT(row.userFavorite)) as userFavorite, count(DISTINCT(row.userRepost)) as userRepost,
+count(DISTINCT(row.userDislike)) as userDislike, row.relType as relType, row.entryId as entryId, row.entryText as entry, row.titleId as titleId, row.title as title, row.userCreatedEntryImg as createdEntryUserImg, 
+row.relCreateDate as relCreateDate, row.createdEntryTime as createdEntryTime, row.usr  ORDER by row.relCreateDate DESC
+//ANA AKIŞ SORGUSU SON--------------------------------------------------------------------------
+
+
+//-------------------------Takip etme Sorgusu (user1, user2'yi takip eder.) Bir yere ilişki atarken UNIQUE kullanımına dikkat etmek önemlidir.--------------------------------
+MATCH (user1:User)
+WHERE user1.id = 'ecb9c07f-42c9-4bf5-9dca-42319164d6d3'
+MATCH (user2:User)
+WHERE user2.id = 'df31fb64-d1ed-4ce1-ba48-dc210243fa58'
+CREATE UNIQUE (user1)-[rel:FOLLOW {createDate:datetime()}]->(user2)
+RETURN rel, user1, user2
+
+//----------------------------kullanının kendi entrilerini silmesini sağlayan sorgu-----------------------------------------
+MATCH (user:User{id:'ecb9c07f-42c9-4bf5-9dca-42319164d6d3'})-[:AUTHOR]-> (entry:Entries{id:'ecb9c07f-42c9-4bf5-9dca-42319164d6d3'})
+DETACH DELETE entry
+
+//-----------------------------------------------------profil info ekleme----------------------------------------------------------
+create (userinfo:Userinfo{id:"ecb9c07f-42c9-4bf5-9dca-42319164d6d3", about:"Hakkimda", b_day:datetime(), location:"Ankara", createDate:datetime(), hobbies:"Web Programlama dilleri üzerine yazılım üretmek, film izlemek, futbol. Ayrıca Netflix'in gönlümdeki yeri ayrıdır", tvSeries:"Game Of Thrones, Breaking Bad, Bodyguard, Better Call Saul", films:"Avengers Film Series",games:"World of Warcraft, Witcher Series, Detroit: Become Human",artists:"Koreli Şarkıcılar Dışında Pek Çok Sanatçı", books:"Dünyanın İlk Günü", writers:"Mehmet Akif ERSOY,Beyazıt AKMAN", others:""})
+
+
+//-------------------------------------------profil kısmı için takipçileri getirme------------------------------------------------------
+MATCH (user:User)<-[r:FOLLOW]-(a:User)
+WHERE user.id = 'ecb9c07f-42c9-4bf5-9dca-42319164d6d3'
+OPTIONAL MATCH  (a)-[rel1:FOLLOW]->(followedUser:User)
+OPTIONAL MATCH  (a)<-[rel2:FOLLOW]-(followerUser:User)
+OPTIONAL MATCH (a)-[rel3:AUTHOR]->(createdEntry:Entries)
+with collect({userId:a.id,name:a.name, userName : a.userName, userProfilePics:a.profile_pics,rank:a.rank,followedUser:followedUser,followerUser:followerUser,createdEntry:createdEntry}) as data
+UNWIND data as row
+return row.userId as userId,row.userName as userName, row.name as name, row.userProfilePics as userProfilePics, row.rank as userRank, count(distinct(row.followedUser)) as followedUser, count(distinct(row.followerUser)) as followerUser,count(distinct(row.createdEntry)) as createdEntry
+
+
+//---------------------------------------Profil sayfası favladığı entryleri getirme sorgusu -----------------------------
+MATCH (user:User)-[userFav:favorite]->(a:Entries)<-[:HAS_ENTRY]-(title:Title)
+WHERE user.id = 'ecb9c07f-42c9-4bf5-9dca-42319164d6d3'
+OPTIONAL MATCH  (user)-[userLike:like]->(a) 
+OPTIONAL MATCH  (user)-[userFavorite:favorite]->(a) 
+OPTIONAL MATCH  (user)-[userRepost:repost]->(a) 
+OPTIONAL MATCH (user)-[userDislike:dislike]->(a)
+OPTIONAL MATCH ()-[CountLike:like]->(a) OPTIONAL MATCH ()-[countFav:favorite]->(a) 
+OPTIONAL MATCH ()-[countDislike:dislike]->(a) OPTIONAL MATCH ()-[countRepost:repost]->(a) 
+OPTIONAL MATCH (userCreatedEntry)-[relAuth:AUTHOR]->(a)
+with collect({usr:user.name, entryId:a.id, entryOwnerId:userCreatedEntry.id, entryOwnerName:userCreatedEntry.name, entryOwnerUserName:userCreatedEntry.userName,entryOwnerImg:userCreatedEntry.profile_pics,  entryText:a.text, entryCreateDate:a.createDate, 
+titleId:title.id, title:title.text, userLike:(userLike), 
+userFavorite:(userFavorite), userRepost:(userRepost), userDislike:userDislike, CountLike:CountLike, countFav:countFav, countDislike:countDislike,
+countRepost:countRepost,createdEntryUserId :userCreatedEntry.id, userCreatedEntryImg:userCreatedEntry.profile_pics, createdEntryTime:a.createDate, relCreateDate : userFav.createDate }) as fav
+UNWIND fav as row
+return count(DISTINCT(row.userLike)) as userLike, count(DISTINCT(row.userFavorite)) as userFavorite, count(DISTINCT(row.userRepost)) as userRepost, count(DISTINCT(row.userDislike)) as userDislike, 
+count(DISTINCT(row.CountLike)) as CountLike, count(DISTINCT(row.countFav)) as countFav, count(DISTINCT(row.countRepost)) as countRepost, count(DISTINCT(row.countDislike)) as countDislike, row.entryId as entryId,  
+row.createdEntryUserId as createdEntryUserId,  row.entryOwnerName as entryOwnerName,  row.entryOwnerUserName as entryOwnerUserName, row.entryOwnerImg as entryOwnerImg, row.entryText as entryText, row.titleId as titleId, 
+row.title as title, row.entryCreateDate as entryCreateDate, row.relCreateDate as relCreateDate ORDER by row.relCreateDate DESC
+
+// ----------------------------- Profil sayfası oluşturduğum ve repost ettiğim entryler ---------------------------- //
+MATCH (user:User)-[author:AUTHOR]->(a:Entries)<-[:HAS_ENTRY]-(title:Title)
+WHERE user.id = 'ecb9c07f-42c9-4bf5-9dca-42319164d6d3'
+OPTIONAL MATCH  (user)-[userLike:like]->(a) 
+OPTIONAL MATCH  (user)-[userFavorite:favorite]->(a) 
+OPTIONAL MATCH  (user)-[userRepost:repost]->(a) 
+OPTIONAL MATCH (user)-[userDislike:dislike]->(a)
+OPTIONAL MATCH ()-[CountLike:like]->(a) OPTIONAL MATCH ()-[countFav:favorite]->(a) 
+OPTIONAL MATCH ()-[countDislike:dislike]->(a) OPTIONAL MATCH ()-[countRepost:repost]->(a) 
+OPTIONAL MATCH (userCreatedEntry)-[relAuth:AUTHOR]->(a)
+with collect({usr:user.name, entryId:a.id, entryOwnerId:userCreatedEntry.id, entryOwnerName:userCreatedEntry.name, entryOwnerUserName:userCreatedEntry.userName, 
+entryOwnerImg:userCreatedEntry.profile_pics,  entryText:a.text, entryCreateDate:a.createDate, 
+titleId:title.id, title:title.text, userLike:(userLike),relType:author.relName, 
+userFavorite:(userFavorite), userRepost:(userRepost), userDislike:userDislike, CountLike:CountLike, countFav:countFav, countDislike:countDislike,
+countRepost:countRepost, createdEntryUserId :userCreatedEntry.id, userCreatedEntryImg:userCreatedEntry.profile_pics, createdEntryTime:a.createDate, relCreateDate:author.createDate }) as auther
+MATCH (user:User)-[rpost:repost]->(a:Entries)<-[:HAS_ENTRY]-(title:Title)
+WHERE user.id = 'ecb9c07f-42c9-4bf5-9dca-42319164d6d3'
+OPTIONAL MATCH  (user)-[userLike:like]->(a) 
+OPTIONAL MATCH  (user)-[userFavorite:favorite]->(a) 
+OPTIONAL MATCH  (user)-[userRepost:repost]->(a) 
+OPTIONAL MATCH (user)-[userDislike:dislike]->(a)
+OPTIONAL MATCH ()-[CountLike:like]->(a) OPTIONAL MATCH ()-[countFav:favorite]->(a) 
+OPTIONAL MATCH ()-[countDislike:dislike]->(a) OPTIONAL MATCH ()-[countRepost:repost]->(a) 
+OPTIONAL MATCH (userCreatedEntry)-[relAuth:AUTHOR]->(a)
+with auther + collect({usr:user.name, entryId:a.id, entryOwnerId:userCreatedEntry.id, entryOwnerName:userCreatedEntry.name, entryOwnerUserName:userCreatedEntry.userName,
+entryOwnerImg: userCreatedEntry.profile_pics,  entryText:a.text, entryCreateDate:a.createDate, 
+titleId:title.id, title:title.text, userLike:(userLike), relType:rpost.relName,  
+userFavorite:(userFavorite), userRepost:(userRepost), userDislike:userDislike, CountLike:CountLike, countFav:countFav, countDislike:countDislike,
+countRepost:countRepost,createdEntryUserId :userCreatedEntry.id, userCreatedEntryImg:userCreatedEntry.profile_pics, createdEntryTime:a.createDate, relCreateDate : rpost.createDate }) as autherRepost
+UNWIND autherRepost  as row
+return count(DISTINCT(row.userLike)) as userLike, count(DISTINCT(row.userFavorite)) as userFavorite, count(DISTINCT(row.userRepost)) as userRepost, count(DISTINCT(row.userDislike)) as userDislike, 
+count(DISTINCT(row.CountLike)) as CountLike, count(DISTINCT(row.countFav)) as countFav, count(DISTINCT(row.countRepost)) as countRepost, count(DISTINCT(row.countDislike)) as countDislike, row.entryId as entryId,  
+row.createdEntryUserId as createdEntryUserId,  row.entryOwnerName as entryOwnerName,  row.entryOwnerUserName as entryOwnerUserName, row.entryOwnerImg as entryOwnerImg, row.entryText as entryText, row.titleId as titleId, 
+row.title as title, row.entryCreateDate as entryCreateDate,row.relType as relType, row.relCreateDate as relCreateDate ORDER by row.relCreateDate DESC
