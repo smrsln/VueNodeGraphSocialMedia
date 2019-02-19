@@ -22,7 +22,7 @@
 
 						<div class="monthly-indicator">
 							<a href="#" class="btn btn-control bg-bakimbi">
-								<i title="Takip Edilen" class="material-icons">how_to_reg</i>
+								<i title="Takip Edilen" class="material-icons">contacts</i>
 							</a>
 
 							<div class="monthly-count">

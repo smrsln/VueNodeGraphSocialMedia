@@ -47,12 +47,12 @@
 						</div>
 					</div>
 					<div class="top-header-author">
-						<a href="02-ProfilePage.html" class="author-thumb">
+						<a href="#" class="author-thumb">
 							<img :src="'../assets/profile_pics/' + this.$cookies.get('user').profile_pics" alt="author">
 						</a>
 						<div class="author-content">
-							<a href="#" class="h4 author-name">Poyraz Karayel</a>
-							<div class="country">Çaylak</div>
+							<a href="#" class="h4 author-name">{{this.$cookies.get('user').name}}</a>
+							<div class="country">{{this.$cookies.get('user').rank}}</div>
 						</div>
 					</div>
 				</div>

@@ -22,7 +22,7 @@
 									<div class="friend-count" data-swiper-parallax="-500">
 										<a href="#" class="friend-count-item">
 											<div class="h6">52</div>
-											<div class="title"><i title="Takip Edilen" class="material-icons">how_to_reg</i></div>
+											<div class="title"><i title="Takip Edilen" class="material-icons">contacts</i></div>
 										</a>
 										<a href="#" class="friend-count-item">
 											<div class="h6">240</div>
