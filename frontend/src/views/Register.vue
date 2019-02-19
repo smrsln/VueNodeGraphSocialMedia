@@ -21,8 +21,16 @@
 								</div>
 								<div class="col col-12 col-xl-6 col-lg-6 col-md-6 col-sm-12">
 									<div class="form-group label-floating is-empty">
-										<label class="control-label">Kullanıcı Adınız (@kullanıcıadı)</label>
-										<input class="form-control" placeholder="" type="text" v-model="userObj.userName">
+										
+										<div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="validationTooltipUsernamePrepend">@</span>
+        </div>
+				<label style="margin-left: 10%;" class="control-label">Kullanıcı Adı</label>
+        <input type="text" class="form-control" placeholder="" aria-describedby="validationTooltipUsernamePrepend"  v-model="userObj.userName">
+        
+      </div>
+										
 									</div>
 								</div>
 								<div class="col col-12 col-xl-6 col-lg-6 col-md-6 col-sm-12">

@@ -47,7 +47,7 @@
 						</div>
 						<div class="friend-avatar">
 							<div class="author-thumb">
-								<img style="width:100px; height:100px;" :src="'../../assets/profile_pics/' + follower.userProfilePics" alt="author">
+								<img style="width:100px; height:100px;" :src="'../../assets/profile_pics/' + follower.userProfilePics" >
 							</div>
 							<div class="author-content">
 								<a href="#" class="h5 author-name">{{follower.name}}</a>
@@ -66,7 +66,7 @@
 										</a>
 										<a href="#" class="friend-count-item">
 											<div class="h6">{{follower.followedUser}}</div>
-											<div class="title"><i title="Takip Edilen" class="material-icons">how_to_reg</i></div>
+											<div class="title"><i title="Takip Edilen" class="material-icons">people</i></div>
 										</a>
 										<a href="#" class="friend-count-item">
 											<div class="h6">{{follower.followerUser}}</div>

@@ -44,6 +44,7 @@ export default {
   },
   created() {
     this.getTiteContent(1);
+    
   },
   mounted(){
   }

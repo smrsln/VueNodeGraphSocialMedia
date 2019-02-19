@@ -12,7 +12,7 @@ export class APIService {
 
     //vuex yani store.js deki currentTitle alanını set et.
     setCurrentTitle(id) {
-        console.log('bu ne id = ' + id);
+        //console.log('bu ne id = ' + id);
         const url = `${API_URL}/getCurrentTitle/${id}`;
         return axios.get(url).then(response => response.data);
     }
@@ -92,27 +92,42 @@ export class APIService {
     } 
 
     followerService(userid) {
-        console.log("API userid: " + userid);
+        //console.log("API userid: " + userid);
         const url = `${API_URL}/followerService/${userid}`;
         return axios.get(url).then(response => response.data);
     } 
 
     followedService(userid) {
-        console.log("API userid: " + userid);
+        //console.log("API userid: " + userid);
         const url = `${API_URL}/followedService/${userid}`;
         return axios.get(url).then(response => response.data);
     } 
 
     getMyFavoriteEtries(userid,pg) {
-        console.log("API userid: " + userid);
+        //console.log("API userid: " + userid);
         const url = `${API_URL}/getMyFavoriteEtries/${userid}/${pg}`;
         return axios.get(url).then(response => response.data);
     } 
 
     getMyEntriesForProfilPage(userid,pg) {
-        console.log("API userid: " + userid);
-        console.log("pg: " + pg);
+        //console.log("API userid: " + userid);
+        //console.log("pg: " + pg);
         const url = `${API_URL}/getMyEntriesForProfilPage/${userid}/${pg}`;
         return axios.get(url).then(response => response.data);
-    } 
+    }
+
+    userAdviceService(item) {
+        console.log("UserAdvice API çalıştı !");
+        const url = `${API_URL}/userAdviceService/`;
+        return axios.post(url, item);
+    }
+
+    followService(item) {
+        const url = `${API_URL}/followService/`;
+        return axios.post(url, item);
+    }
+    unfollowService(item) {
+        const url = `${API_URL}/unfollowService/`;
+        return axios.post(url, item);
+    }
 }

@@ -71,7 +71,7 @@
 										</a>
 										<a href="#" class="friend-count-item">
 											<div class="h6">{{item.followedUser}}</div>
-											<div class="title"><i title="Takip Edilen" class="material-icons">how_to_reg</i></div>
+											<div class="title"><i title="Takip Edilen" class="material-icons">person_add</i></div>
 										</a>
 										<a href="#" class="friend-count-item">
 											<div class="h6">{{item.followerUser}}</div>

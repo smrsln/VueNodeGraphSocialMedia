@@ -54,12 +54,8 @@
             <a
               href="#"
               @click.prevent="favoriteControl(item.id,item.userFavorite)"
-              class="post-add-icon inline-items"
-            >
-              <i
-                :class="{'voted' : item.userFavorite > 0 , '':item.userFavorite === 0}"
-                class="material-icons"
-              >favorite</i>
+              class="post-add-icon inline-items">
+              <i :class="{'voted' : item.userFavorite > 0 , '':item.userFavorite === 0}" class="material-icons">favorite</i>
               
               <span>{{item.favorite}}</span>
             </a>
@@ -210,7 +206,7 @@ export default {
           comment: this.comment
         };
 
-        console.log(commentObj);
+        //console.log(commentObj);
         apiService.addComment(commentObj).then(data => {
           this.comment = "";
           if (data.data === "ok") {
@@ -407,18 +403,24 @@ export default {
         apiService.undislikeService(item).then(data => {
           if (data.data === "deleted") {
             //id->titleId
-            apiService.setCurrentTitle(this.currentTitleId).then(currentTitleData => {
-              let pageNum = this.pageNum;
-              apiService
-                .setTitleComments(this.currentTitleId, this.$cookies.get("user").id, pageNum)
-                .then(titleCommentsData => {
-                  this.$store.dispatch("setCurrentTitle", {
-                    currentTitleData: currentTitleData,
-                    titleCommentsData: titleCommentsData,
-                    entryCount: this.titleEntryCount
+            apiService
+              .setCurrentTitle(this.currentTitleId)
+              .then(currentTitleData => {
+                let pageNum = this.pageNum;
+                apiService
+                  .setTitleComments(
+                    this.currentTitleId,
+                    this.$cookies.get("user").id,
+                    pageNum
+                  )
+                  .then(titleCommentsData => {
+                    this.$store.dispatch("setCurrentTitle", {
+                      currentTitleData: currentTitleData,
+                      titleCommentsData: titleCommentsData,
+                      entryCount: this.titleEntryCount
+                    });
                   });
-                });
-            });
+              });
           } else {
             toastr.error(
               "Dislike geri çekerken birşeyler yanlış gitti. Kesinlikle yazılımcıların suçu değil ama yine de bir bakacaklar rahat ol.",
@@ -575,23 +577,24 @@ export default {
       };
       //alert(item.userId);
       apiService.deleteEntry(item).then(data => {
-        console.log(data);
-              apiService.setCurrentTitle(this.currentTitleId).then(currentTitleData => {
+        //console.log(data);
         apiService
-          .setTitleComments(
-            this.currentTitleId,
-            this.$cookies.get("user").id,
-            this.pageNum
-          )
-          .then(titleCommentsData => {
-            this.$store.dispatch("setCurrentTitle", {
-              currentTitleData: currentTitleData,
-              titleCommentsData: titleCommentsData,
-              entryCount: this.titleEntryCount
-            });
+          .setCurrentTitle(this.currentTitleId)
+          .then(currentTitleData => {
+            apiService
+              .setTitleComments(
+                this.currentTitleId,
+                this.$cookies.get("user").id,
+                this.pageNum
+              )
+              .then(titleCommentsData => {
+                this.$store.dispatch("setCurrentTitle", {
+                  currentTitleData: currentTitleData,
+                  titleCommentsData: titleCommentsData,
+                  entryCount: this.titleEntryCount
+                });
+              });
           });
-      });
-
       });
       //alert(entryId);
     }
@@ -612,7 +615,7 @@ export default {
     titleEntryCount() {
       return this.$store.getters.titleEntryCount;
     },
-    pageNum(){
+    pageNum() {
       return this.$store.getters.pageNum;
     }
   },

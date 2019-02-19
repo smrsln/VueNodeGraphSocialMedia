@@ -385,7 +385,7 @@ router.post('/unrepostService', function (req, res) {
     console.log(error);
   });
 });
-
+//*********************************** REPOST SERVİSİ BİTİŞ *****************************************************
 
 router.post('/deleteEntry', function (req, res) {
 
@@ -534,7 +534,7 @@ router.get('/aboutService/:userid/', function (req, res) {
   });
   
 });
-//**************************************REPOST SERVİSİ BİTİŞ *************************************
+//**************************************PROFİL/HAKKIMIZDA SERVİSİ BİTİŞ *************************************
 
 //************************************** PROFİL/TAKİPÇİ İÇERİK SERVİSİ BAŞLANGIÇ************************/
 router.get('/followerService/:userid/', function (req, res) {
@@ -565,7 +565,7 @@ router.get('/followerService/:userid/', function (req, res) {
     obj = obj.substring(0, obj.length - 1);
     obj += ']';
     data = JSON.parse(obj);
-    console.log(data);
+    //console.log(data);
     res.json(data);
   }).catch(function (error) {
     console.log(error);
@@ -645,7 +645,7 @@ router.get('/getMyFavoriteEtries/:userid/:pg/', function (req, res) {
     row.entryOwnerImg as entryOwnerImg, row.entryText as entryText, row.titleId as titleId, row.title as title, row.entryCreateDate as entryCreateDate,
     row.relCreateDate as relCreateDate ORDER by row.relCreateDate DESC SKIP 0
     ` + " LIMIT " + req.params.pg * 5;
-    console.log(query);
+    //console.log(query);
     let result = transaction.run(query);
     return result;
   });
@@ -713,7 +713,7 @@ router.get('/getMyEntriesForProfilPage/:userid/:pg/', function (req, res) {
     row.createdEntryUserId as createdEntryUserId,  row.entryOwnerName as entryOwnerName,  row.entryOwnerUserName as entryOwnerUserName, row.entryOwnerImg as entryOwnerImg, row.entryText as entryText, row.titleId as titleId, 
     row.title as title, row.entryCreateDate as entryCreateDate,row.relType as relType, row.relCreateDate as relCreateDate ORDER by row.relCreateDate DESC SKIP 0
     `+ " LIMIT " + req.params.pg * 5;
-    console.log(query);
+    //console.log(query);
     let result = transaction.run(query);
     return result;
   });
@@ -740,6 +740,89 @@ router.get('/getMyEntriesForProfilPage/:userid/:pg/', function (req, res) {
 
 });
 
+//*********************************** FOLLOW SERVİSİ BAŞLANGIÇ *****************************************************
+router.post('/followService/', function (req, res) {
+  let driver = neo4j.driver("bolt://localhost:" + neo4jPort, neo4j.auth.basic("neo4j", "123123."), {
+    maxTransactionRetryTime: 30000
+  });
+  let session = driver.session();
+
+  let readTxResultPromise = session.readTransaction(function (transaction) {
+    let query = "MATCH (user:User) WHERE user.userName = '" + req.body.userName + "' MATCH (followed:User) WHERE followed.id = '" + req.body.followedid + "' CREATE UNIQUE (user)-[follow:FOLLOW {relName:'follow',createDate:datetime()}]->(followed) RETURN  follow";
+    //console.log("Follow Query: " + query);
+    let result = transaction.run(query);
+    return result;
+  });
+  readTxResultPromise.then(function (result) {
+    //console.log(result.records[0].get('follow').properties);
+    if (result.records[0].get('follow').properties.createDate.year.low > 0) {
+      res.send("ok");
+    } else {
+      res.send("err");
+    }
+
+  }).catch(function (error) {
+    console.log(error);
+  });
+});
+//*********************************** FOLLOW SERVİSİ BİTİŞ *****************************************************
+
+//*********************************** UNFOLLOW SERVİSİ BAŞLANGIÇ *****************************************************
+router.post('/unfollowService', function (req, res) {
+  let driver = neo4j.driver("bolt://localhost:" + neo4jPort, neo4j.auth.basic("neo4j", "123123."), {
+    maxTransactionRetryTime: 30000
+  });
+  let session = driver.session();
+
+  let readTxResultPromise = session.readTransaction(function (transaction) {
+    let query = "MATCH (user:User)-[r:FOLLOW]->(followed:User) WHERE user.userName = '" + req.body.userName + "' AND followed.id = '" + req.body.followedid + "' CREATE (user)-[unfollow:UNFOLLOW {createDate: r.createDate, deleteDate:datetime()}]->(followed) DELETE r RETURN unfollow";
+
+    let result = transaction.run(query);
+    return result;
+  });
+  readTxResultPromise.then(function (result) {
+    console.log(result.records[0].get('unfollow').properties);
+    if (result.records[0].get('unfollow').properties.deleteDate.year.low > 0) {
+      res.send("deleted");
+    } else {
+      res.send("err");
+    }
+
+  }).catch(function (error) {
+    console.log(error);
+  });
+});
+//*********************************** UNFOLLOW SERVİSİ BİTİŞ *****************************************************
+
+//*********************************** USERADVICE SERVİSİ BAŞLANGIÇ *****************************************************
+router.post('/userAdviceService/', function (req, res) {
+  let driver = neo4j.driver("bolt://localhost:" + neo4jPort, neo4j.auth.basic("neo4j", "123123."), {
+    maxTransactionRetryTime: 30000
+  });
+  let session = driver.session();
+  let readTxResultPromise = session.readTransaction(function (transaction) {
+    //console.log("UserAdvice Verisi: " + JSON.stringify(req.body));
+    let query = "MATCH (user:User) WHERE user.id = '" + req.body.loggedId + "' OPTIONAL MATCH  (usr:User)<-[rel:FOLLOW]-() WHERE usr.id <> '" + req.body.loggedId + "' OPTIONAL MATCH (user)-[isFollowed:FOLLOW]->(usr) return usr.id as userId, usr.name as name,usr.userName as userName, usr.rank as rank, usr.profile_pics as profile_pics, count(DISTINCT(rel)) as  followerCount, CASE isFollowed WHEN null THEN 0 ELSE 1 END as followedStatus SKIP 0 LIMIT 30";
+    //console.log("Tavsiye Sorgusu: " + query);
+    let result = transaction.run(query);
+    return result;
+  });
+  readTxResultPromise.then(function (result) {
+    obj = '[';
+    result.records.forEach(function (record) {
+      obj += '{"userId":' + '"' + record.get('userId') + '", "userName":' + '"' + record.get('userName') + '", "name":' + '"' + record.get('name') + '", "profile_pics":' + '"' + record.get('profile_pics') + '", "rank":' + '"' + record.get('rank') + '", "followedStatus":' + '"' + record.get('followedStatus') + '"},'
+    });
+    obj = obj.substring(0, obj.length - 1);
+    obj += ']';
+    data = JSON.parse(obj);
+    //console.log(data);
+    //console.log("Veri tipi: " + typeof(data));
+    res.json(data);
+  }).catch(function (error) {
+    console.log(error);
+  });
+});
+//*********************************** USERADVICE SERVİSİ BİTİŞ *****************************************************
 
 app.use(router);
 
