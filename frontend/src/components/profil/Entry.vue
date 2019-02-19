@@ -10,7 +10,7 @@
 				<div class="ui-block" v-for="item in data">
 					
 					<article class="hentry post video">
-						<a href=""><h3 style="font-weight: bold;">{{item.title}}</h3></a>
+						<a @click.prevent="getEntriesForTitle(item.titleId)" href=""><h3 style="font-weight: bold;">{{item.title}}</h3></a>
 						{{item.relType}}
 					<div style="border-top: 1px solid #e6ecf5;"></div>
 					
@@ -291,6 +291,18 @@ export default {
 	addPgCounter(){
 		this.pg++;
 		this.getMyEntries(this.$cookies.get('user').id);
+	},
+	getEntriesForTitle(titleId){
+      apiService.getEntryCountForCurrentTitle(titleId).then(entryCount => {
+        apiService.setCurrentTitle(titleId).then(currentTitleData => {
+		    let pageNum = 1;
+        	apiService.setTitleComments(titleId,this.$cookies.get('user').id,pageNum).then(titleCommentsData => {
+        		console.log(titleCommentsData);
+        		this.$store.dispatch('setCurrentTitle', { currentTitleData: currentTitleData, titleCommentsData: titleCommentsData, entryCount : entryCount});
+        		this.$router.push({name: 'title_page'});
+        	});
+      	});
+      });
 	}
   },
   created(){

@@ -11,7 +11,7 @@
 				<div class="ui-block" v-for="item in data">
 					
 					<article style="text-align: left;" class="hentry post video">
-						<a href=""><h3 style="font-weight: bold; ">{{item.title}}</h3></a>
+						<a  @click.prevent="getEntriesForTitle(item.titleId)" href=""><h3 style="font-weight: bold; ">{{item.title}}</h3></a>
 
 					<div style="border-top: 1px solid #e6ecf5;"></div>
 					
@@ -81,7 +81,7 @@
 				</div>
 			</div>
 
-			<a id="load-more-button" href="#" class="btn btn-control btn-more" data-load-link="items-to-load.html" data-container="newsfeed-items-grid">
+			<a id="load-more-button" @click.prevent="addPgCounter()" href="#" class="btn btn-control btn-more" data-load-link="items-to-load.html" data-container="newsfeed-items-grid">
 				<svg class="olymp-three-dots-icon">
 					<use xlink:href="../../assets/svg-icons/sprites/icons.svg#olymp-three-dots-icon"></use>
 				</svg>
@@ -115,7 +115,8 @@ export default {
   name: 'favorite',
   data() {
     return {
-        data: []
+		data: [],
+		pg:1
     }
   },
   components: {
@@ -125,7 +126,7 @@ export default {
   methods:{
     getFollowers(userid){
 		//console.log(userid);
-        apiService.getMyFavoriteEtries(userid).then(data => {
+        apiService.getMyFavoriteEtries(userid,this.pg).then(data => {
 			this.data=data;
 			console.log(data);
             return this.data;
@@ -300,11 +301,28 @@ export default {
           }
         });
       }
-    }
+	},
+	addPgCounter(){
+		this.pg++;
+		this.getFollowers(this.$cookies.get('user').id);
+  },
+  	getEntriesForTitle(titleId){
+      apiService.getEntryCountForCurrentTitle(titleId).then(entryCount => {
+        apiService.setCurrentTitle(titleId).then(currentTitleData => {
+		    let pageNum = 1;
+        	apiService.setTitleComments(titleId,this.$cookies.get('user').id,pageNum).then(titleCommentsData => {
+        		console.log(titleCommentsData);
+        		this.$store.dispatch('setCurrentTitle', { currentTitleData: currentTitleData, titleCommentsData: titleCommentsData, entryCount : entryCount});
+        		this.$router.push({name: 'title_page'});
+        	});
+      	});
+      });
+	}
 },
 created(){
     //console.log(this.$store.state.user.id);
-    this.getFollowers(this.$cookies.get('user').id);
+	this.getFollowers(this.$cookies.get('user').id);
+	this.pg = 1;
 }
 }
 </script>

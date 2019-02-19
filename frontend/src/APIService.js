@@ -30,10 +30,6 @@ export class APIService {
         const url = `${API_URL}/login/`;
         return axios.post(url, userObj);
     }
-    register(userObj) {
-        const url = `${API_URL}/register/`;
-        return axios.post(url, userObj);
-    }
 
     likeService(item) {
         const url = `${API_URL}/likeService/`;
@@ -92,28 +88,63 @@ export class APIService {
     } 
 
     followerService(userid) {
-        //console.log("API userid: " + userid);
+        console.log("API userid: " + userid);
         const url = `${API_URL}/followerService/${userid}`;
         return axios.get(url).then(response => response.data);
     } 
 
     followedService(userid) {
-        //console.log("API userid: " + userid);
+        console.log("API userid: " + userid);
         const url = `${API_URL}/followedService/${userid}`;
         return axios.get(url).then(response => response.data);
     } 
 
     getMyFavoriteEtries(userid,pg) {
-        //console.log("API userid: " + userid);
+        console.log("API userid: " + userid);
         const url = `${API_URL}/getMyFavoriteEtries/${userid}/${pg}`;
         return axios.get(url).then(response => response.data);
     } 
 
     getMyEntriesForProfilPage(userid,pg) {
-        //console.log("API userid: " + userid);
-        //console.log("pg: " + pg);
+        console.log("API userid: " + userid);
+        console.log("pg: " + pg);
         const url = `${API_URL}/getMyEntriesForProfilPage/${userid}/${pg}`;
         return axios.get(url).then(response => response.data);
+    } 
+
+    getEntryCountForCurrentTitle(titleid) {
+        const url = `${API_URL}/getEntryCountForCurrentTitle/${titleid}`;
+        return axios.get(url).then(response => response.data);
+    } 
+
+    test(item) {
+        const url = `${API_URL}/test/`;
+        return axios.post(url, item);
+    }
+
+    getPersonalInformation(userId){
+        const url = `${API_URL}/getPersonalInformation/${userId}`;
+        return axios.get(url).then(response => response.data);
+    }
+
+    setPersonalInformation(item) {
+        const url = `${API_URL}/setPersonalInformation/`;
+        return axios.post(url, item);
+    }
+
+    getHobbiesAndInterests(userId){
+        const url = `${API_URL}/getHobbiesAndInterests/${userId}`;
+        return axios.get(url).then(response => response.data);
+    }
+
+    setHobbiesAndInterests(item) {
+        const url = `${API_URL}/setHobbiesAndInterests/`;
+        return axios.post(url, item);
+    }
+
+    register(userObj) {
+        const url = `${API_URL}/register/`;
+        return axios.post(url, userObj);
     }
 
     userAdviceService(item) {
@@ -130,4 +161,5 @@ export class APIService {
         const url = `${API_URL}/unfollowService/`;
         return axios.post(url, item);
     }
+
 }

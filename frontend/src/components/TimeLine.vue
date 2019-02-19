@@ -6,7 +6,7 @@
 				<div class="ui-block" v-for="item in timeLine">
 					
 					<article class="hentry post video">
-						<a href=""><h3 style="font-weight: bold;">{{item.title}}</h3>
+						<a @click.prevent="getEntriesForTitle(item.titleId)" href=""><h3 style="font-weight: bold;">{{item.title}}</h3>
 						<div  style="float:right">
 							<div class="row">
 							<span class="badge badge-info">{{item.hasRelName + ' - ' + (item.relType=='like' ? 'Beğendi' : item.relType=='fav' ? 'Favladı' : item.relType=='rePost' ? 'Paylaştı': item.relType=='dislike' ? 'Beğenmedi' :'Ouluşturdu')  }}</span>
@@ -108,14 +108,17 @@ export default {
   data() {
 	  return {
       timeLine:[],
-      pg:1
+      arrangedTimeLine:[],
+      pg:1,
+      test:[]
 	  }
 
   },
   methods: {
 	  getTimeLine(){
 			apiService.getMainFlow(this.$cookies.get('user').id,this.pg).then(data => {
-				this.timeLine= data;
+        this.timeLine= data;
+        //this.mytest();
     	});
 	  },
 		repostControl(entryId, userRepost) {
@@ -289,10 +292,47 @@ export default {
     addPgCounter(){
 		  this.pg++;
 		  this.getTimeLine();
-	  }
+    },
+    loadTimeLine(){
+      this.pg = 1;
+      this.getTimeLine();
+    },
+    getEntriesForTitle(titleId){
+      apiService.getEntryCountForCurrentTitle(titleId).then(entryCount => {
+        apiService.setCurrentTitle(titleId).then(currentTitleData => {
+		    let pageNum = 1;
+        apiService.setTitleComments(titleId,this.$cookies.get('user').id,pageNum).then(titleCommentsData => {
+        console.log(titleCommentsData);
+        this.$store.dispatch('setCurrentTitle', { currentTitleData: currentTitleData, titleCommentsData: titleCommentsData, entryCount : entryCount});
+        this.$router.push({name: 'title_page'});
+        });
+      });
+      });
+  },
+  mytest(){//test için yazıldı sonra silinecek
+    //new Date(year, month, date, hours, minutes, seconds, ms) 21.1.2019 12:32
+ 
+
+    let abc = this.timeLine;
+    this.timeLine.forEach(function (value, key) {
+     console.log(value.entry);
+     console.log(value.eventTime);
+        //let dateAndHour = value.eventTime.split(' ');
+        //let date = dateAndHour[0].split('.');//0->gün, 1 ay, 2 yıl
+        //let hour = dateAndHour[1].split(':'); //2019-01-21T12:35:20.403000000Z
+     //console.log(new Date('2019-01-21T12:35:20.403000000Z'));
+      //this.arrangedTimeLine.push();//this.sehirler.filter(x=>x.hasRelUserId === value.hasRelUserId && x.entryId === value.entryId) .find(y=> y.eventTime)
+      //.find(y=> Math.max(new Date(y.eventTime)))
+      //console.log(abc.filter(x=>x.hasRelUserId === value.hasRelUserId && x.entryId === value.entryId));
+      console.log(abc.filter(x=>x.hasRelUserId === value.hasRelUserId && x.entryId === value.entryId).find(y=> Math.max()));
+
+
+    });
+  }
   },
   created(){
-	  this.getTimeLine();
+    this.loadTimeLine();
+    
   },
   mounted(){
 

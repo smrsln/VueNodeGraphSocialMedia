@@ -74,8 +74,6 @@ export default {
   },
   methods: {
 	  login(){
-		  //alert(this.userObj.pass.length);
-		  //this.$store.dispatch('clearUser');
 		  this.err = [];
 		  if(!this.userObj.userName){
 			  this.err.push("Kullanıcı adı alanı boş bırakılamaz!");
@@ -87,7 +85,6 @@ export default {
 		  }
 		  
 		  if(!(this.err.length > 0)){
-			  console.log("login ol");
 				apiService.login(this.userObj).then(data => {
 					this.$cookies.set('user',data.data);
 					this.$router.push({ name: 'home'});

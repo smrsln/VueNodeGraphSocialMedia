@@ -220,7 +220,7 @@
 
 			<div class="author-page author vcard inline-items more">
 				<div class="author-thumb">
-					<img alt="author" src="../assets/img/author-page.jpg" class="avatar">
+					<img alt="author" :src="'../assets/profile_pics/' + this.$cookies.get('user').profile_pics" style="height:36px; width:36px;" class="avatar">
 					
 					<div class="more-dropdown more-with-triangle">
 						<div class="mCustomScrollbar" data-mcs-theme="dark">
@@ -230,12 +230,12 @@
 
 							<ul class="account-settings">
 								<li>
-									<a href="profil-ayarlari.php">
+									<router-link to="/ProfileSettings">
 
 										<svg class="olymp-menu-icon"><use xlink:href="../assets/svg-icons/sprites/icons.svg#olymp-menu-icon"></use></svg>
 
 										<span>Profil Ayarları</span>
-									</a>
+									</router-link>
 								</li>
 								<li>
 									<a href="#">

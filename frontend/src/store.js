@@ -9,7 +9,6 @@ const apiService = new APIService();
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  
   strict: true,
   plugins: [
   ],

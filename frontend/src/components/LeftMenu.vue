@@ -1,6 +1,7 @@
 <template>
 
         <aside  style=" text-align: left;">
+
 						<div class="ui-block">
 				<div class="friend-item">
 				
@@ -21,7 +22,7 @@
 									<div class="friend-count" data-swiper-parallax="-500">
 										<a href="#" class="friend-count-item">
 											<div class="h6">52</div>
-											<div class="title"><i title="Takip Edilen" class="material-icons">people</i></div>
+											<div class="title"><i title="Takip Edilen" class="material-icons">how_to_reg</i></div>
 										</a>
 										<a href="#" class="friend-count-item">
 											<div class="h6">240</div>
@@ -59,8 +60,8 @@
 
 </template>
 
-<script>
 
+<script>
 import { APIService } from "../APIService";
 const apiService = new APIService();
 
@@ -75,7 +76,6 @@ export default {
 
   },
   methods: {
-		
     getLeftData() {
       apiService.getLeftData().then(data => {
 		this.leftData = data;
@@ -101,10 +101,8 @@ export default {
 	}
   },
   created(){
-		this.getLeftData();
-		 
+	  this.getLeftData();
   }
 
 };
-
 </script>

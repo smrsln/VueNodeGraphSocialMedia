@@ -3,14 +3,14 @@
     <div id="newsfeed-items-grid">
       <div class="ui-block">
         <article class="hentry post video">
-          <a href>
+          <a href="#">
             <h3 style="font-weight: bold; color: #ff5e3a;">{{$store.state.currentTitle.text}}</h3>
           </a>
         </article>
       </div>
     </div>
 
-    <div class="ui-block" v-for="item in titleCommets">
+    <div class="ui-block" v-for="item in titleComments">
       <article class="hentry post-devam">
         <p>{{item.text}}</p>
 
@@ -54,8 +54,12 @@
             <a
               href="#"
               @click.prevent="favoriteControl(item.id,item.userFavorite)"
-              class="post-add-icon inline-items">
-              <i :class="{'voted' : item.userFavorite > 0 , '':item.userFavorite === 0}" class="material-icons">favorite</i>
+              class="post-add-icon inline-items"
+            >
+              <i
+                :class="{'voted' : item.userFavorite > 0 , '':item.userFavorite === 0}"
+                class="material-icons"
+              >favorite</i>
               
               <span>{{item.favorite}}</span>
             </a>
@@ -65,7 +69,7 @@
             style="float: right; margin-bottom: 0;"
             class="post__author author vcard inline-items"
           >
-            <img src="../assets/img/avatar8-sm.jpg" alt="author">
+            <img :src="'/assets/profile_pics/' + item.profile_pics" alt="author">
 
             <div class="author-date">
               <a class="h6 post__author-name fn" href="#">{{item.name}}</a>
@@ -185,12 +189,13 @@ export default {
   },
   methods: {
     addComment() {
+      
       /*
-      apiService.getMainFlow(this.$store.state.user.id).then(data => {
+      apiService.test({}).then(data => {
         alert(data);
       });
       return;
-      */
+  */
 
       if (!this.comment) {
         toastr.warning("Lütfen Yorum Giriniz!.", "Başarısız!", {
@@ -206,7 +211,7 @@ export default {
           comment: this.comment
         };
 
-        //console.log(commentObj);
+        console.log(commentObj);
         apiService.addComment(commentObj).then(data => {
           this.comment = "";
           if (data.data === "ok") {
@@ -403,24 +408,18 @@ export default {
         apiService.undislikeService(item).then(data => {
           if (data.data === "deleted") {
             //id->titleId
-            apiService
-              .setCurrentTitle(this.currentTitleId)
-              .then(currentTitleData => {
-                let pageNum = this.pageNum;
-                apiService
-                  .setTitleComments(
-                    this.currentTitleId,
-                    this.$cookies.get("user").id,
-                    pageNum
-                  )
-                  .then(titleCommentsData => {
-                    this.$store.dispatch("setCurrentTitle", {
-                      currentTitleData: currentTitleData,
-                      titleCommentsData: titleCommentsData,
-                      entryCount: this.titleEntryCount
-                    });
+            apiService.setCurrentTitle(this.currentTitleId).then(currentTitleData => {
+              let pageNum = this.pageNum;
+              apiService
+                .setTitleComments(this.currentTitleId, this.$cookies.get("user").id, pageNum)
+                .then(titleCommentsData => {
+                  this.$store.dispatch("setCurrentTitle", {
+                    currentTitleData: currentTitleData,
+                    titleCommentsData: titleCommentsData,
+                    entryCount: this.titleEntryCount
                   });
-              });
+                });
+            });
           } else {
             toastr.error(
               "Dislike geri çekerken birşeyler yanlış gitti. Kesinlikle yazılımcıların suçu değil ama yine de bir bakacaklar rahat ol.",
@@ -577,24 +576,23 @@ export default {
       };
       //alert(item.userId);
       apiService.deleteEntry(item).then(data => {
-        //console.log(data);
+        console.log(data);
+              apiService.setCurrentTitle(this.currentTitleId).then(currentTitleData => {
         apiService
-          .setCurrentTitle(this.currentTitleId)
-          .then(currentTitleData => {
-            apiService
-              .setTitleComments(
-                this.currentTitleId,
-                this.$cookies.get("user").id,
-                this.pageNum
-              )
-              .then(titleCommentsData => {
-                this.$store.dispatch("setCurrentTitle", {
-                  currentTitleData: currentTitleData,
-                  titleCommentsData: titleCommentsData,
-                  entryCount: this.titleEntryCount
-                });
-              });
+          .setTitleComments(
+            this.currentTitleId,
+            this.$cookies.get("user").id,
+            this.pageNum
+          )
+          .then(titleCommentsData => {
+            this.$store.dispatch("setCurrentTitle", {
+              currentTitleData: currentTitleData,
+              titleCommentsData: titleCommentsData,
+              entryCount: this.titleEntryCount
+            });
           });
+      });
+
       });
       //alert(entryId);
     }
@@ -606,7 +604,7 @@ export default {
         (this.titleEntryCount % 5 > 0 ? 1 : 0)
       );
     },
-    titleCommets() {
+    titleComments() {
       return this.$store.getters.titleComments;
     },
     currentTitleId() {
@@ -615,12 +613,13 @@ export default {
     titleEntryCount() {
       return this.$store.getters.titleEntryCount;
     },
-    pageNum() {
+    pageNum(){
       return this.$store.getters.pageNum;
     }
   },
   created() {
     //salert(this.$route.params.id);
+    //alert("test");
   }
 };
 </script>

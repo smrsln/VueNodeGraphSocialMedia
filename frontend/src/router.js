@@ -10,6 +10,7 @@ import Likes from './components/profil/Likes.vue'
 import Followed from './components/profil/Followed.vue'
 import Followers from './components/profil/Followers.vue'
 import Info from './components/profil/Info.vue'
+import ProfileSettings from './views/ProfileSettings.vue'
 
 
 Vue.use(Router)
@@ -24,19 +25,24 @@ export default new Router({
       component: Home
     },
     {
+      path: '/ProfileSettings',
+      name: 'ProfileSettings',
+      component: ProfileSettings
+    },
+    {
       path: '/login',
       name: 'login',
       component: Login
     },
     {
+      path: '/TitlePage/',
+      name: 'title_page',
+      component: TitlePage
+    },
+    {
       path: '/register',
       name: 'register',
       component: Register
-    },
-    {
-      path: '/TitlePage',
-      name: 'title_page',
-      component: TitlePage
     },
     {
       path: '/profil',

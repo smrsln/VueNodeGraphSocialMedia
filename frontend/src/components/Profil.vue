@@ -48,7 +48,7 @@
 					</div>
 					<div class="top-header-author">
 						<a href="02-ProfilePage.html" class="author-thumb">
-							<img src="../assets/img/author-main1.jpg" alt="author">
+							<img :src="'../assets/profile_pics/' + this.$cookies.get('user').profile_pics" alt="author">
 						</a>
 						<div class="author-content">
 							<a href="#" class="h4 author-name">Poyraz Karayel</a>

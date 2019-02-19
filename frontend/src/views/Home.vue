@@ -1,21 +1,26 @@
 <template>
   <div class="home">
-    <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" style="max-width: 1200px;" role="document">
-    <div class="modal-content">
-      <section class="section">
-    
-        
-                <horizontal-stepper :steps="Steps" @completed-step="completeStep"
-                                    @active-step="isStepActive" @stepper-finished="alert"
-                >                     
-                </horizontal-stepper>
-            
-    
-</section>
+    <div
+      class="modal fade bd-example-modal-lg"
+      id="exampleModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" style="max-width: 1200px;" role="document">
+        <div class="modal-content">
+          <section class="section">
+            <horizontal-stepper
+              :steps="Steps"
+              @completed-step="completeStep"
+              @active-step="isStepActive"
+              @stepper-finished="alert"
+            ></horizontal-stepper>
+          </section>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
     <div class="row">
       <div class="col-md-1"></div>
       <div class="col-md-2">
@@ -25,7 +30,7 @@
         <time-line></time-line>
       </div>
       <div class="col-md-2">
-        <right-menu></right-menu>  
+        <right-menu></right-menu>
       </div>
       <div class="col-md-1"></div>
       <update-header-photo></update-header-photo>
@@ -36,26 +41,26 @@
 <script>
 import HorizontalStepper from 'vue-stepper';
 // @ is an alias to /src
-import LeftMenu from '@/components/LeftMenu.vue'
-import TitleContent from '@/components/TitleContent.vue'
-import RightMenu from '@/components/RightMenu.vue'
-import UpdateHeaderPhoto from '@/components/UpdateHeaderPhoto.vue'
-import TimeLine from '@/components/TimeLine.vue'
+import LeftMenu from "@/components/LeftMenu.vue";
+import TitleContent from "@/components/TitleContent.vue";
+import RightMenu from "@/components/RightMenu.vue";
+import UpdateHeaderPhoto from "@/components/UpdateHeaderPhoto.vue";
+import TimeLine from "@/components/TimeLine.vue";
 import StepOne from '@/components/StepOne.vue';
 import StepTwo from '@/components/StepTwo.vue';
 import StepThree from '@/components/StepThree.vue';
 
 export default {
-  name: 'bakimbi',
+  name: "bakimbi",
   components: {
-    'left-menu':LeftMenu,
-    'title-content':TitleContent,
-    'right-menu':RightMenu,
-    'update-header-photo':UpdateHeaderPhoto,
-    'time-line':TimeLine,
+    "left-menu": LeftMenu,
+    "title-content": TitleContent,
+    "right-menu": RightMenu,
+    "update-header-photo": UpdateHeaderPhoto,
+    "time-line": TimeLine,
     HorizontalStepper
   },
-   data(){
+  data(){
             return {
                 Steps: [
                     {
@@ -87,7 +92,7 @@ export default {
                 ]
             }
         },
-         methods: {
+        methods: {
             // Executed when @completed-step event is triggered
             completeStep(payload) {
                 this.Steps.forEach((step) => {
@@ -111,10 +116,9 @@ export default {
                 alert('end')
             }
         },
-  created(){       
-  },
+  created() {},
   mounted(){
     $('#exampleModal').modal('show');
   }
-}
+};
 </script>
