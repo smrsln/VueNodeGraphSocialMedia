@@ -321,8 +321,10 @@ export default {
 },
 created(){
     //console.log(this.$store.state.user.id);
-	this.getFollowers(this.$cookies.get('user').id);
-	this.pg = 1;
+  this.pg = 1;
+  //alert("test");
+  this.getFollowers(this.$cookies.get('user').id);
+
 }
 }
 </script>

@@ -306,8 +306,9 @@ export default {
 	}
   },
   created(){
+  this.pg = 1;
+  console.log("test");
 	this.getMyEntries(this.$cookies.get('user').id);
-	this.pg = 1;
 }
 }
 </script>

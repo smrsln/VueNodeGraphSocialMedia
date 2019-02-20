@@ -9,11 +9,20 @@
 
 	<div class="header-content-wrapper">
 		<form style="margin-left: 23%;" class="search-bar w-search notification-list friend-requests">
+			<div class="dropdown"> 
 			<div class="form-group with-button">
-				<input class="form-control js-user-search" type="text">
+				<input class="form-control" data-toggle="dropdown" v-model="searchData" v-on:keypress.enter.prevent="test" type="text">
 				<button>
 					<svg class="olymp-magnifying-glass-icon"><use xlink:href="../assets/svg-icons/sprites/icons.svg#olymp-magnifying-glass-icon"></use></svg>
 				</button>
+				<div  style="width: 100%; padding: 1.5rem 0;" class="dropdown-menu" aria-labelledby="dropdownMenu2">
+					
+    <button style="left: 0 !important; background-color: white; position: relative;" class="dropdown-item" type="button">data 1</button>
+	<button style="left: 0 !important; background-color: white; position: relative;" class="dropdown-item" type="button">data 2</button>
+	<button style="left: 0 !important; background-color: white; position: relative;" class="dropdown-item" type="button">data 3</button>
+    
+  </div>
+			</div>
 			</div>
 		</form>
 
@@ -541,12 +550,54 @@
 </template>
 
 <script>
+
+import { APIService } from "../APIService";
+const apiService = new APIService();
 export default {
   name: 'Nav',
    data() {
     	return {
-
+			searchData:'',
+			users:[]
 		}
-	}
+	},
+	methods:{
+		test(){
+
+		},
+		search(searchData){
+			console.log(this.searchData);
+			 let key={
+				key: searchData
+			 }
+			apiService.searchUser(key).then(data => {
+				if(data.data==='err'){
+
+				}
+				else{
+					this.users = data.data;
+					this.init(this.users);
+				}
+					
+			});
+		},
+		init(data){
+			
+		}
+	  },
+	 created(){
+	  this.init([]);
+	  },
+	computed: {
+		//this.searchData
+		
+	},
+	 watch:{
+		 searchData(value){
+			 this.search([]);
+			 this.search(value);
+			 console.log(this.users);
+		 }
+	 }
 }
 </script>

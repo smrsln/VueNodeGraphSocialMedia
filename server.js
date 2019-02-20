@@ -926,7 +926,7 @@ router.post('/userAdviceService/', function (req, res) {
   let readTxResultPromise = session.readTransaction(function (transaction) {
     //console.log("UserAdvice Verisi: " + JSON.stringify(req.body));
     let query = "MATCH (user:User) WHERE user.id = '" + req.body.loggedId + "' OPTIONAL MATCH  (usr:User)<-[rel:FOLLOW]-() WHERE usr.id <> '" + req.body.loggedId + "' OPTIONAL MATCH (user)-[isFollowed:FOLLOW]->(usr) return usr.id as userId, usr.name as name,usr.userName as userName, usr.rank as rank, usr.profile_pics as profile_pics, count(DISTINCT(rel)) as  followerCount, CASE isFollowed WHEN null THEN 0 ELSE 1 END as followedStatus SKIP 0 LIMIT 30";
-    //console.log("Tavsiye Sorgusu: " + query);
+    console.log("Tavsiye Sorgusu: " + query);
     let result = transaction.run(query);
     return result;
   });
@@ -1001,10 +1001,44 @@ router.post('/unfollowService', function (req, res) {
 });
 //************ UNFOLLOW SERVİSİ BİTİŞ ******************
 
+router.post('/searchUser', function (req, res) {
+  let driver = neo4j.driver("bolt://localhost:" + neo4jPort, neo4j.auth.basic("neo4j", "123123."), {
+    maxTransactionRetryTime: 30000
+  });
+  let session = driver.session();
+
+  let readTxResultPromise = session.readTransaction(function (transaction) {
+      let query = "MATCH (n:User) where n.name=~'(?i).*" + req.body.key + ".*' RETURN n.id as userId, n.userName as userName, n.name as name, n.profile_pics as profile_pics, n.rank as rank";
+      console.log(query);
+      let result = transaction.run(query);
+      return result;
+  });
+
+  readTxResultPromise.then(function (result) {
+    try {
+      //console.log(result.records[0].get('n').properties);
+      //res.json(result.records[0].get('n').properties);
+      obj = '[';
+      result.records.forEach(function (record) {
+        obj += '{"userId":' + '"' + record.get('userId') + '", "userName":' + '"' + record.get('userName') + '", "name":' + '"' + record.get('name') + '", "profile_pics":' + '"' + record.get('profile_pics') + '", "rank":' + '"' + record.get('rank') + '"},'
+      });
+      obj = obj.substring(0, obj.length - 1);
+      obj += ']';
+      data = JSON.parse(obj);
+      console.log(data);
+      res.json(data);
+    } catch (error) {
+      console.log(error);
+      res.send("err");
+    }
+
+  }).catch(function (error) {
+    console.log(error);
+  });
+});
+
+
 app.use(router);
-
-
-
 
 //-------------------------------------------------------------------FONKSİYONLAR ---------------------------------------------------------------------------
 //İlerde farklı bir js dosyasına taşınacak

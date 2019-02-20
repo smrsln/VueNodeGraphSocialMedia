@@ -15,7 +15,7 @@
               :steps="Steps"
               @completed-step="completeStep"
               @active-step="isStepActive"
-              @stepper-finished="alert"
+              @stepper-finished="isCompleted"
             ></horizontal-stepper>
           </section>
         </div>
@@ -87,7 +87,7 @@ export default {
                         title: 'İyi Eğlenceler !',
                         subtitle: '',
                         component: StepThree,
-                        completed: false
+                        completed: true
                     }
                 ]
             }
@@ -112,8 +112,8 @@ export default {
                 })
             },
             // Executed when @stepper-finished event is triggered
-            alert(payload) {
-                alert('end')
+            isCompleted(){
+              $('#exampleModal').modal('hide');
             }
         },
   created() {},

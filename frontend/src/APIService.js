@@ -162,4 +162,10 @@ export class APIService {
         return axios.post(url, item);
     }
 
+    searchUser(item) {
+        console.log("UserAdvice API çalıştı !");
+        const url = `${API_URL}/searchUser/`;
+        return axios.post(url, item);
+    }
+
 }
