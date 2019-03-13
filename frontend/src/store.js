@@ -16,6 +16,14 @@ export default new Vuex.Store({
     titleComments: [],
     titleEntryCount : 0,
     currentTitle: {},
+    profile:{
+      userId:'',
+      userName:'',
+      name:'',
+      profile_pics:'',
+      rank:'',
+      type:'1'//1 kendi profilim, 2 başkasının profili eğer type == 2 ise takip et butonu çıksın
+    },
     test:{},
     pageNum:1
   },
@@ -23,7 +31,13 @@ export default new Vuex.Store({
     titleComments: state => state.titleComments,
     currentTitleId: state => state.currentTitle.id,
     titleEntryCount: state => state.titleEntryCount,
-    pageNum: state=> state.pageNum
+    pageNum: state=> state.pageNum,
+    profilUserId:state=>state.profile.userId,
+    profilUserName:state=>state.profile.userName,
+    profilName:state=>state.profile.name,
+    profilPics:state=>state.profile.profile_pics,
+    profilUserType:state=>state.profile.type,
+    profilUserRank:state=>state.profile.rank
   },
   mutations: {
     setCurrentTitle(state, payload) {
@@ -33,6 +47,14 @@ export default new Vuex.Store({
     },
     setPageNumber(state,payload) {
       state.pageNum = payload.pgNum;
+    },
+    setProfile(state,payload){
+      state.profile.userId = payload.userId;
+      state.profile.userName = payload.userName;
+      state.profile.name = payload.name;
+      state.profile.profile_pics = payload.profile_pics;
+      state.profile.rank = payload.rank;
+      state.profile.type = payload.type;
     }
   },
   actions: {
@@ -41,6 +63,9 @@ export default new Vuex.Store({
     },
     setPageNumber(context, payload) {
       context.commit('setPageNumber',payload);
+    },
+    setProfile(context, payload) {
+      context.commit('setProfile',payload);
     }
   }
 });

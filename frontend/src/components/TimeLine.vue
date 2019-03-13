@@ -2,21 +2,18 @@
     		<main class="" style=" text-align: left;">
 
 			<div id="newsfeed-items-grid">
-
+      <div class="alert alert-secondary" v-if="!(timeLine.length > 0)" role="alert">
+        Ana akış için lütfen kullanıcı takip edin.
+      </div>
 				<div class="ui-block" v-for="item in timeLine">
 					
 					<article class="hentry post video">
 						<a @click.prevent="getEntriesForTitle(item.titleId)" href=""><h3 style="font-weight: bold;">{{item.title}}</h3>
 						<div  style="float:right">
 							<div class="row">
-							<span class="badge badge-info">{{item.hasRelName + ' - ' + (item.relType=='like' ? 'Beğendi' : item.relType=='fav' ? 'Favladı' : item.relType=='rePost' ? 'Paylaştı': item.relType=='dislike' ? 'Beğenmedi' :'Ouluşturdu')  }}</span>
+							<span class="badge badge-info">{{item.hasRelName + ' - ' + (item.relType=='like' ? 'Beğendi' : item.relType=='fav' ? 'Favladı' : item.relType=='rePost' ? 'Paylaştı': item.relType=='dislike' ? 'Beğenmedi' :'Oluşturdu')  }}</span>
 							</div>
-							<div class="row">
-							<span class="badge badge-info">{{item.eventTime}}</span>
-							</div>
-						</div>
-						
-						
+						</div>				
 						</a>
 						
 					<div style="border-top: 1px solid #e6ecf5;"></div>
@@ -55,7 +52,7 @@
 							<img :src="'assets/profile_pics/' + item.createdEntryUserImg" alt="author">
 					
 							<div class="author-date">
-								<a class="h6 post__author-name fn" href="#">{{item.createdEntryUser}}</a>
+								<a class="h6 post__author-name fn" @click.prevent="goProfilePage(item.createdEntryUserId, item.createdEntryUserName, item.createdEntryUser, item.createdEntryUserImg, 'yazar')" href="#">{{item.createdEntryUser}}</a>
 								<div style="margin-right: 20px;" class="post__date">
 									<time class="published" datetime="2004-07-24T18:18">
 										{{item.createdEntryTime}}
@@ -92,7 +89,7 @@
 				</div>
 			</div>
 
-			<a id="load-more-button" @click.prevent="addPgCounter()" href="#" class="btn btn-control btn-more" data-load-link="items-to-load.html" data-container="newsfeed-items-grid"><svg class="olymp-three-dots-icon"><use xlink:href="svg-icons/sprites/icons.svg#olymp-three-dots-icon"></use></svg></a>
+			<a id="load-more-button" v-if="(timeLine.length > 0)" @click.prevent="addPgCounter()" href="#" class="btn btn-control btn-more" data-load-link="items-to-load.html" data-container="newsfeed-items-grid"><svg class="olymp-three-dots-icon"><use xlink:href="svg-icons/sprites/icons.svg#olymp-three-dots-icon"></use></svg></a>
 
 		</main>
 </template>
@@ -117,7 +114,15 @@ export default {
   methods: {
 	  getTimeLine(){
 			apiService.getMainFlow(this.$cookies.get('user').id,this.pg).then(data => {
-        this.timeLine= data;
+         //
+         if(data == "0") 
+         {
+           this.timeLine = {};
+         }
+         else{
+            this.timeLine= data;  
+         }
+        console.log("veri:" + data);
         //this.mytest();
     	});
 	  },
@@ -312,7 +317,7 @@ export default {
   mytest(){//test için yazıldı sonra silinecek
     //new Date(year, month, date, hours, minutes, seconds, ms) 21.1.2019 12:32
  
-
+/*
     let abc = this.timeLine;
     this.timeLine.forEach(function (value, key) {
      console.log(value.entry);
@@ -327,15 +332,21 @@ export default {
       console.log(abc.filter(x=>x.hasRelUserId === value.hasRelUserId && x.entryId === value.entryId).find(y=> Math.max()));
 
 
-    });
-  }
+    });*/
+  },
+  goProfilePage(userId, userName, name, profile_pics,rank){
+      
+     let userType = userId ==  this.$cookies.get('user').id ? 1 : 2;
+				this.$store.dispatch('setProfile', { userId: userId, userName: userName, name:name, profile_pics:profile_pics, rank:rank, type : userType});
+				this.$router.push({name: 'profil-entry'});
+		}
   },
   created(){
-    this.loadTimeLine();
+
     
   },
   mounted(){
-
+    this.loadTimeLine();
   }
 
 };

@@ -1,135 +1,193 @@
 <template>
-    <div class="container">
-	<div class="row">
+  <div class="container">
+    <div class="row">
+      <!-- Main Content -->
+      <div
+        class="col col-xl-6 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12"
+        style=" text-align: left;"
+      >
+      <div class="alert alert-secondary"  style=" text-align: center;" v-if="!(data.length > 0)" role="alert">
+        Listelenecek hiç paylaşımınız yok.
+      </div>
+        <div id="newsfeed-items-grid">
+          <div class="ui-block" v-for="item in data">
+            <article class="hentry post video">
+              <a @click.prevent="getEntriesForTitle(item.titleId)" href>
+                <h3 style="font-weight: bold;">{{item.title}}</h3>
+              </a>
+              {{item.relType}}
+              <div style="border-top: 1px solid #e6ecf5;"></div>
 
-		<!-- Main Content -->
+              <p>{{item.entryText}}</p>
 
-		<div class="col col-xl-6 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12" style=" text-align: left;">
-			<div id="newsfeed-items-grid">
+              <div class="post-additional-info inline-items">
+                <div class="comments-shared">
+                  <a
+                    href="#"
+                    @click.prevent="repostControl(item.entryId,item.userRepost)"
+                    class="post-add-icon inline-items"
+                  >
+                    <i
+                      :class="{'voted' : item.userRepost > 0 , '':item.userRepost === 0}"
+                      class="material-icons"
+                    >reply</i>
+                    <span>{{item.countRepost}}</span>
+                  </a>
+                  <a
+                    href="#"
+                    @click.prevent="likeControl(item.entryId,item.userLike)"
+                    class="post-add-icon inline-items"
+                  >
+                    <i
+                      :class="{'voted' : item.userLike > 0 , '':item.userLike === 0}"
+                      class="material-icons"
+                    >sentiment_very_satisfied</i>
+                    <span>{{item.CountLike}}</span>
+                  </a>
+                  <a
+                    href="#"
+                    @click.prevent="dislikeControl(item.entryId,item.userDislike)"
+                    class="post-add-icon inline-items"
+                  >
+                    <i
+                      :class="{'voted' : item.userDislike > 0 , '':item.userDislike === 0}"
+                      class="material-icons"
+                    >sentiment_very_dissatisfied</i>
+                    <span>{{item.countDislike}}</span>
+                  </a>
+                  <a
+                    href="#"
+                    @click.prevent="favoriteControl(item.entryId,item.userFavorite)"
+                    class="post-add-icon inline-items"
+                  >
+                    <i
+                      :class="{'voted' : item.userFavorite > 0 , '':item.userFavorite == 0}"
+                      class="material-icons"
+                    >favorite</i>
+                    <span>{{item.countFav}}</span>
+                  </a>
+                </div>
+                <div
+                  style="float: right; margin-bottom: 0;"
+                  class="post__author author vcard inline-items"
+                >
+                  <img :src="'../../assets/profile_pics/' + item.entryOwnerImg" alt="author">
 
-				<div class="ui-block" v-for="item in data">
-					
-					<article class="hentry post video">
-						<a @click.prevent="getEntriesForTitle(item.titleId)" href=""><h3 style="font-weight: bold;">{{item.title}}</h3></a>
-						{{item.relType}}
-					<div style="border-top: 1px solid #e6ecf5;"></div>
-					
-						<p>{{item.entryText}}</p>
-					
-						<div class="post-additional-info inline-items">
-							<div class="comments-shared">
-								<a href="#" @click.prevent="repostControl(item.entryId,item.userRepost)" class="post-add-icon inline-items">
-									<i :class="{'voted' : item.userRepost > 0 , '':item.userRepost === 0}" class="material-icons">reply</i>
-									<span>{{item.countRepost}}</span>
-								</a>				
-								<a href="#" @click.prevent="likeControl(item.entryId,item.userLike)" class="post-add-icon inline-items">
-									<i :class="{'voted' : item.userLike > 0 , '':item.userLike === 0}" class="material-icons">sentiment_very_satisfied</i>
-									<span>{{item.CountLike}}</span>
-								</a>
-								<a href="#" @click.prevent="dislikeControl(item.entryId,item.userDislike)" class="post-add-icon inline-items">
-								<i :class="{'voted' : item.userDislike > 0 , '':item.userDislike === 0}" class="material-icons">sentiment_very_dissatisfied</i>
-								<span>{{item.countDislike}}</span>
-							</a>
-							<a href="#" @click.prevent="favoriteControl(item.entryId,item.userFavorite)" class="post-add-icon inline-items">
-									<i :class="{'voted' : item.userFavorite > 0 , '':item.userFavorite === 0}" class="material-icons">favorite</i>
-									<span>{{item.countFav}}</span>
-								</a>
-							</div>
-					<div style="float: right; margin-bottom: 0;" class="post__author author vcard inline-items">
-							<img :src="'../../assets/profile_pics/' + item.entryOwnerImg" alt="author">
-					
-							<div class="author-date">
-								<a class="h6 post__author-name fn" href="#">{{item.entryOwnerName}}</a> 
-								<div class="post__date">
-									<time class="published" datetime="2004-07-24T18:18">
-										{{item.entryCreateDate}}
-									</time>
-								</div>
-								<div style="float: right; margin-top: -20px; margin-right: 0 !important;" class="more"><svg class="olymp-three-dots-icon"><use xlink:href="../../assets/svg-icons/sprites/icons.svg#olymp-three-dots-icon"></use></svg>
-								<ul class="more-dropdown">
-									<li>
-										<a href="#">Takip Et</a>
-									</li>
-									<li>
-										<a href="#">Özel Mesaj At</a>
-									</li>
-									<li>
-										<a href="#">Şikayet Et</a>
-									</li>
-									<li>
-										<a href="#">Engelle</a>
-									</li>
-									<hr>
-									<li>
-										<a href="#">Düzenle</a>
-									</li>
-									<li>
-										<a href="#">Sil</a>
-									</li>
-								</ul>
-							</div>
-							</div>
-						</div>
-						</div>
-					</article>
-				</div>
-			</div>
+                  <div class="author-date">
+                    <a class="h6 post__author-name fn" href="#">{{item.entryOwnerName}}</a>
+                    <div class="post__date">
+                      <time class="published" datetime="2004-07-24T18:18">{{item.entryCreateDate}}</time>
+                    </div>
+                    <div
+                      style="float: right; margin-top: -20px; margin-right: 0 !important;"
+                      class="more"
+                    >
+                      <svg class="olymp-three-dots-icon">
+                        <use
+                          xlink:href="../../assets/svg-icons/sprites/icons.svg#olymp-three-dots-icon"
+                        ></use>
+                      </svg>
+                      <ul class="more-dropdown">
+                        <li>
+                          <a href="#" v-if="profilUserType == '2'">Takip Et</a>
+                        </li>
+                        <li>
+                          <a href="#" v-if="profilUserType == '2'">Özel Mesaj At</a>
+                        </li>
+                        <li>
+                          <a href="#" v-if="profilUserType == '2'">Şikayet Et</a>
+                        </li>
+                        <li>
+                          <a href="#" v-if="profilUserType == '2'">Engelle</a>
+                        </li>
+                        <hr>
+                        <li>
+                          <a href="#">Düzenle</a>
+                        </li>
+                        <li>
+                          <a href="#">Sil</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
 
-			<a id="load-more-button" @click.prevent="addPgCounter()" href="#" class="btn btn-control btn-more" data-load-link="items-to-load.html" data-container="newsfeed-items-grid">
-				<svg class="olymp-three-dots-icon">
-					<use xlink:href="../../assets/svg-icons/sprites/icons.svg#olymp-three-dots-icon"></use>
-				</svg>
-			</a>
-		</div>
+        <a
+          id="load-more-button"  v-if="(data.length > 0)"
+          @click.prevent="addPgCounter()"
+          href="#"
+          class="btn btn-control btn-more"
+          data-load-link="items-to-load.html"
+          data-container="newsfeed-items-grid"
+        >
+          <svg class="olymp-three-dots-icon">
+            <use xlink:href="../../assets/svg-icons/sprites/icons.svg#olymp-three-dots-icon"></use>
+          </svg>
+        </a>
+      </div>
 
-		<!-- ... end Main Content -->
-		<!-- Left Sidebar -->
-        <biography></biography>
+      <!-- ... end Main Content -->
+      <!-- Left Sidebar -->
+      <biography></biography>
 
-		<!-- Right Sidebar -->
-       <statistics></statistics>
-	</div>
-</div>
+      <!-- Right Sidebar -->
+      <statistics></statistics>
+    </div>
+  </div>
 </template>
 
 <script>
-import Biography from './Biography'
-import Statistics from './Statistics'
+import Biography from "./Biography";
+import Statistics from "./Statistics";
 import { APIService } from "../../APIService";
 const apiService = new APIService();
 export default {
-  name: 'Entry',
-    data() {
+  name: "Entry",
+  data() {
     return {
-		data: [],
-		pg : 1
-    }
+      data: [],
+      pg: 1
+    };
   },
   components: {
-    biography :Biography,
-    statistics:Statistics
+    biography: Biography,
+    statistics: Statistics
   },
-  methods:{
-    getMyEntries(userid){
-		//console.log(userid);
-		//
-    	apiService.getMyEntriesForProfilPage(userid,this.pg).then(result => {
-			this.data=result;	
-        	return this.data;
-    }).catch(hata => {
-    	console.log(hata);
-  	});
-	},
-   	likeControl(entryId, userLike) {
+  methods: {
+    getMyEntries(userid) {
+      //console.log(userid);
+      //
+      apiService
+        .getMyEntriesForProfilPage(userid, this.$cookies.get('user').id, this.pg)
+        .then(result => {
+
+           if(result == "0") 
+         {
+           this.data = {};
+         }
+         else{
+            this.data = result;
+         }
+          return this.data;
+        })
+        .catch(hata => {
+          console.log(hata);
+        });
+    },
+    likeControl(entryId, userLike) {
       let item = {
-          id: entryId,//entry id
-          userName: this.$cookies.get('user').userName
+        id: entryId, //entry id
+        userName: this.$cookies.get('user').userName
       };
 
       if (userLike > 0) {
         apiService.unlikeService(item).then(data => {
           if (data.data === "deleted") {
-				this.getMyEntries(this.$cookies.get('user').id);
+            this.getMyEntries(this.profilUserId);
           } else {
             toastr.error(
               "Beğeni geri çekerken birşeyler yanlış gitti. Kesinlikle yazılımcıların suçu değil ama yine de bir bakacaklar rahat ol.",
@@ -144,7 +202,7 @@ export default {
       } else {
         apiService.likeService(item).then(data => {
           if (data.data === "ok") {
-				this.getMyEntries(this.$cookies.get('user').id);
+            this.getMyEntries(this.profilUserId);
             toastr.success("Ne güzel beğendin öyle.", "Başarılı", {
               timeOut: 4000,
               positionClass: "toast-bottom-right"
@@ -161,8 +219,8 @@ export default {
           }
         });
       }
-	},
-	repostControl(entryId, userRepost) {
+    },
+    repostControl(entryId, userRepost) {
       let item = {
         id: entryId,
         userName: this.$cookies.get('user').userName
@@ -171,7 +229,7 @@ export default {
       if (userRepost > 0) {
         apiService.unrepostService(item).then(data => {
           if (data.data === "deleted") {
-			this.getMyEntries(this.$cookies.get('user').id);
+            this.getMyEntries(this.profilUserId);
           } else {
             toastr.error(
               "Entry geri çekerken birşeyler yanlış gitti. Kesinlikle yazılımcıların suçu değil ama yine de bir bakacaklar rahat ol.",
@@ -186,7 +244,7 @@ export default {
       } else {
         apiService.repostService(item).then(data => {
           if (data.data === "ok") {
-				this.getMyEntries(this.$cookies.get('user').id);
+            this.getMyEntries(this.profilUserId);
             toastr.success("Hmmm güzel entrymiş.", "Başarılı", {
               timeOut: 4000,
               positionClass: "toast-bottom-right"
@@ -203,8 +261,8 @@ export default {
           }
         });
       }
-	},
-	dislikeControl(entryId, userDislike) {
+    },
+    dislikeControl(entryId, userDislike) {
       let item = {
         id: entryId,
         userName: this.$cookies.get('user').userName
@@ -213,7 +271,7 @@ export default {
       if (userDislike > 0) {
         apiService.undislikeService(item).then(data => {
           if (data.data === "deleted") {
-				this.getMyEntries(this.$cookies.get('user').id);
+            this.getMyEntries(this.profilUserId);
           } else {
             toastr.error(
               "Dislike geri çekerken birşeyler yanlış gitti. Kesinlikle yazılımcıların suçu değil ama yine de bir bakacaklar rahat ol.",
@@ -228,11 +286,15 @@ export default {
       } else {
         apiService.dislikeService(item).then(data => {
           if (data.data === "ok") {
-				this.getMyEntries(this.$cookies.get('user').id);
-            toastr.success("Sen beğenmediysen kendi kaybetmiştir.", "Başarılı", {
-              timeOut: 4000,
-              positionClass: "toast-bottom-right"
-            });
+            this.getMyEntries(this.profilUserId);
+            toastr.success(
+              "Sen beğenmediysen kendi kaybetmiştir.",
+              "Başarılı",
+              {
+                timeOut: 4000,
+                positionClass: "toast-bottom-right"
+              }
+            );
           } else {
             toastr.error(
               "Diss atarken birşeyler yanlış gitti. Kesinlikle yazılımcıların suçu değil ama yine de bir bakacaklar rahat ol.",
@@ -245,8 +307,8 @@ export default {
           }
         });
       }
-	},
-		favoriteControl(entryId, userFavorite) {
+    },
+    favoriteControl(entryId, userFavorite) {
       let item = {
         id: entryId,
         userName: this.$cookies.get('user').userName
@@ -255,7 +317,7 @@ export default {
       if (userFavorite > 0) {
         apiService.unfavoriteService(item).then(data => {
           if (data.data === "deleted") {
-				this.getMyEntries(this.$cookies.get('user').id);
+            this.getMyEntries(this.profilUserId);
           } else {
             toastr.error(
               "Fav geri çekerken birşeyler yanlış gitti. Kesinlikle yazılımcıların suçu değil ama yine de bir bakacaklar rahat ol.",
@@ -270,7 +332,7 @@ export default {
       } else {
         apiService.favoriteService(item).then(data => {
           if (data.data === "ok") {
-				this.getMyEntries(this.$cookies.get('user').id);
+            this.getMyEntries(this.profilUserId);
             toastr.success("Ne güzel favladın öyle.", "Başarılı", {
               timeOut: 4000,
               positionClass: "toast-bottom-right"
@@ -287,30 +349,55 @@ export default {
           }
         });
       }
-	},
-	addPgCounter(){
-		this.pg++;
-		this.getMyEntries(this.$cookies.get('user').id);
-	},
-	getEntriesForTitle(titleId){
+    },
+    addPgCounter() {
+      this.pg++;
+      this.getMyEntries(this.profilUserId);
+    },
+    getEntriesForTitle(titleId) {//başlığın entrilerine gitmek için
       apiService.getEntryCountForCurrentTitle(titleId).then(entryCount => {
         apiService.setCurrentTitle(titleId).then(currentTitleData => {
-		    let pageNum = 1;
-        	apiService.setTitleComments(titleId,this.$cookies.get('user').id,pageNum).then(titleCommentsData => {
-        		console.log(titleCommentsData);
-        		this.$store.dispatch('setCurrentTitle', { currentTitleData: currentTitleData, titleCommentsData: titleCommentsData, entryCount : entryCount});
-        		this.$router.push({name: 'title_page'});
-        	});
-      	});
+          let pageNum = 1;
+          apiService
+            .setTitleComments(titleId, this.$cookies.get("user").id, pageNum)
+            .then(titleCommentsData => {
+              console.log(titleCommentsData);
+              this.$store.dispatch("setCurrentTitle", {
+                currentTitleData: currentTitleData,
+                titleCommentsData: titleCommentsData,
+                entryCount: entryCount
+              });
+              this.$router.push({ name: "title_page" });
+            });
+        });
       });
-	}
+    }
   },
-  created(){
-  this.pg = 1;
-  console.log("test");
-	this.getMyEntries(this.$cookies.get('user').id);
-}
-}
+  created() {
+
+  },
+  computed: {
+    profilUserId() {
+      return this.$store.getters.profilUserId;
+    },
+    profilUserName() {
+      return this.$store.getters.profilUserName;
+    },
+    profilName() {
+      return this.$store.getters.profilName;
+    },
+    profilPics() {
+      return this.$store.getters.profilPics;
+    },
+    profilUserType() {
+      return this.$store.getters.profilUserType;
+    }
+  },
+  mounted(){
+    this.pg = 1;
+    this.getMyEntries(this.profilUserId);
+  }
+};
 </script>
 
 

@@ -81,34 +81,34 @@ export class APIService {
         return axios.post(url, item);
     }
 
-    aboutService(userid) {
+    personalInformation(profileUserId) {
         //console.log("API userid: " + userid);
-        const url = `${API_URL}/aboutService/${userid}`;
+        const url = `${API_URL}/personalInformation/${profileUserId}`;
         return axios.get(url).then(response => response.data);
     } 
 
-    followerService(userid) {
+    followerService(userid, myUserId) {
         console.log("API userid: " + userid);
-        const url = `${API_URL}/followerService/${userid}`;
+        const url = `${API_URL}/followerService/${userid}/${myUserId}`;
         return axios.get(url).then(response => response.data);
     } 
 
-    followedService(userid) {
+    followedService(userid, myUserId) {
         console.log("API userid: " + userid);
-        const url = `${API_URL}/followedService/${userid}`;
+        const url = `${API_URL}/followedService/${userid}/${myUserId}`;
         return axios.get(url).then(response => response.data);
     } 
 
-    getMyFavoriteEtries(userid,pg) {
-        console.log("API userid: " + userid);
-        const url = `${API_URL}/getMyFavoriteEtries/${userid}/${pg}`;
+    getMyFavoriteEtries(userid,myUserId,pg) {
+        //console.log("API userid: " + userid);
+        const url = `${API_URL}/getMyFavoriteEtries/${userid}/${myUserId}/${pg}`;
         return axios.get(url).then(response => response.data);
     } 
 
-    getMyEntriesForProfilPage(userid,pg) {
+    getMyEntriesForProfilPage(userid,myUserId,pg) {
         console.log("API userid: " + userid);
         console.log("pg: " + pg);
-        const url = `${API_URL}/getMyEntriesForProfilPage/${userid}/${pg}`;
+        const url = `${API_URL}/getMyEntriesForProfilPage/${userid}/${myUserId}/${pg}`;
         return axios.get(url).then(response => response.data);
     } 
 
@@ -166,6 +166,29 @@ export class APIService {
         console.log("UserAdvice API çalıştı !");
         const url = `${API_URL}/searchUser/`;
         return axios.post(url, item);
+    }
+
+    getMutualFriend(userid) {
+        console.log("API userid: " + userid);
+        const url = `${API_URL}/getMutualFriend/${userid}`;
+        return axios.get(url).then(response => response.data);
+    } 
+
+    getSummaryStatistics(userid) {
+        console.log("API userid: " + userid);
+        const url = `${API_URL}/getSummaryStatistics/${userid}`;
+        return axios.get(url).then(response => response.data);
+    } 
+
+    checkFollow(adminUserId, checkedUserId) { //adminUserId/:checkedUserId/
+        const url = `${API_URL}/checkFollow/${adminUserId}/${checkedUserId}`;
+        console.log("url : " + url);
+        return axios.get(url).then(response => response.data);
+    } 
+
+    createTitle(titleObj) {
+        const url = `${API_URL}/createTitle/`;
+        return axios.post(url, titleObj);
     }
 
 }

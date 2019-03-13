@@ -74,6 +74,7 @@ export default {
   },
   methods: {
 	  login(){
+
 		  this.err = [];
 		  if(!this.userObj.userName){
 			  this.err.push("Kullanıcı adı alanı boş bırakılamaz!");
@@ -97,6 +98,7 @@ export default {
 	  
   },
   mounted(){
+		//this.$cookies.remove("user");
   }
 };
 </script>

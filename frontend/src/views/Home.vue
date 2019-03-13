@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    
     <div
       class="modal fade bd-example-modal-lg"
       id="exampleModal"
@@ -114,7 +115,7 @@ export default {
             // Executed when @stepper-finished event is triggered
             isCompleted(){
               $('#exampleModal').modal('hide');
-            }
+            },
         },
   created() {},
   mounted(){

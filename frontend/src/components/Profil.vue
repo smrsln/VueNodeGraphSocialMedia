@@ -48,11 +48,11 @@
 					</div>
 					<div class="top-header-author">
 						<a href="#" class="author-thumb">
-							<img :src="'../assets/profile_pics/' + this.$cookies.get('user').profile_pics" alt="author">
+							<img :src="'../assets/profile_pics/' + profilPics" alt="author">
 						</a>
 						<div class="author-content">
-							<a href="#" class="h4 author-name">{{this.$cookies.get('user').name}}</a>
-							<div class="country">{{this.$cookies.get('user').rank}}</div>
+							<a href="#" class="h4 author-name">{{profilName}}</a>
+							<div class="country">{{profilRank}}</div>
 						</div>
 					</div>
 				</div>
@@ -78,6 +78,23 @@ export default {
   name: 'UpdatePhoto',
   components: {
     'update-header-photo':UpdateHeaderPhoto
+	},
+	  computed: {
+    profilUserId() {
+      return this.$store.getters.profilUserId;
+    },
+    profilUserName() {
+      return this.$store.getters.profilUserName;
+    },
+    profilName() {
+      return this.$store.getters.profilName;
+    },
+    profilPics() {
+      return this.$store.getters.profilPics;
+		},
+		profilRank() {
+      return this.$store.getters.profilRank;
+    }
   }
 }
 </script>

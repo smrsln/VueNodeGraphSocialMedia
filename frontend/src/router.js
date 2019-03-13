@@ -47,6 +47,7 @@ export default new Router({
     {
       path: '/profil',
       component: Profil,
+      name:'profil',
       children:[
         {path:'', component:Entry, name:'profil-entry'},
         {path:'likes', component:Likes, name:'profil-likes'},
@@ -57,3 +58,4 @@ export default new Router({
     }
   ]
 });
+
