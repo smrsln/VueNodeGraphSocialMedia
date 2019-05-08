@@ -19,3 +19,5 @@ To run this project,
 2) npm run serve (in bakimbi/frontend directory)
 
 After building the website, you can access the project with your localhost port.
+
+Note: This build will be moving to NuxtJs Framework if I find the time :)
