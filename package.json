@@ -10,7 +10,7 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.4",
-    "mongoose": "^5.3.3",
+    "mongoose": "^5.7.5",
     "neo4j-driver": "^1.7.0",
     "nodemon": "^1.18.4",
     "string-format": "^2.0.0"
